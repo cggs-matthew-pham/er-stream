@@ -74,24 +74,19 @@ function fillSampleData(): void {
     mainConcludingPoint = 'Educational strategies should evolve beyond rigid formulas to embrace more dynamic, student-centered approaches to teaching writing.';
 }
 
-// Reactive statement to include custom inputs in combinedPrompt
-/*
-$: {
-    combinedPrompt = prompts.map(prompt => {
-        let updatedPrompt = prompt;
-        customInputs.forEach(input => {
-            const regex = new RegExp(`{${input.name}}`, 'g');
-            updatedPrompt = updatedPrompt.replace(regex, input.value);
-        });
-        return updatedPrompt;
-    }).join('\n');
-}*/
-
 $: {
     combinedPrompt = prompts
         .filter((_, index) => selectedPrompts[index])  // Only include prompts that are selected
         .map(prompt => {
-            let updatedPrompt = prompt;
+            let updatedPrompt = prompt
+                .replace('{overallTopic}', overallTopic)
+                .replace('{audience}', audience)
+                .replace('{thesisStatement}', thesisStatement)
+                .replace('{bodyTopic1}', bodyTopic1)
+                .replace('{bodyTopic2}', bodyTopic2)
+                .replace('{bodyTopic3}', bodyTopic3)
+                .replace('{mainConcludingPoint}', mainConcludingPoint);
+
             customInputs.forEach(input => {
                 const regex = new RegExp(`{${input.name}}`, 'g');
                 updatedPrompt = updatedPrompt.replace(regex, input.value);
@@ -100,6 +95,7 @@ $: {
         })
         .join('\n');
 }
+
 
 
 function handleInput(event: Event, index: number): void {
