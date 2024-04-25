@@ -75,6 +75,7 @@ function fillSampleData(): void {
 }
 
 // Reactive statement to include custom inputs in combinedPrompt
+/*
 $: {
     combinedPrompt = prompts.map(prompt => {
         let updatedPrompt = prompt;
@@ -84,7 +85,22 @@ $: {
         });
         return updatedPrompt;
     }).join('\n');
+}*/
+
+$: {
+    combinedPrompt = prompts
+        .filter((_, index) => selectedPrompts[index])  // Only include prompts that are selected
+        .map(prompt => {
+            let updatedPrompt = prompt;
+            customInputs.forEach(input => {
+                const regex = new RegExp(`{${input.name}}`, 'g');
+                updatedPrompt = updatedPrompt.replace(regex, input.value);
+            });
+            return updatedPrompt;
+        })
+        .join('\n');
 }
+
 
 function handleInput(event: Event, index: number): void {
     const target = event.target as HTMLInputElement; // Safely assert here

@@ -12,12 +12,32 @@
 
 
 <style>
+
+img {
+  width: 100%;
+  height: auto;
+  margin: 0;
+  padding: 0;
+  display: block;
+}
+
+nav {
+  width: 100%;
+  position: sticky;
+  top: 0;
+  z-index: 1000;  /* Ensure it's on top of other content */
+}
+
 nav ul {
+  display: flex;
+  position: sticky;
+  top: 0;
   list-style-type: none;
   margin: 0;
   padding: 0;
-  overflow: hidden;
+
   background-color: #333;
+  z-index: 1000; /* Ensure it's on top of other content */
 }
 
 nav ul li {
