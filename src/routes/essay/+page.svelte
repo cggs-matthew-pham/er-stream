@@ -1,5 +1,10 @@
 <script lang="ts">
 let customPromptInput: string = '';
+let customInputName: string = '';
+let customInputs: {
+    name: string,
+    value: string
+} [] = [];
 let overallTopic: string = '';
 let audience: string = '';
 let thesisStatement: string = '';
@@ -30,6 +35,29 @@ function addCustomPrompt(): void {
     }
 }
 
+function addCustomInput(): void {
+    if (customInputName.trim() !== '') {
+        customInputs = [...customInputs, {
+            name: customInputName,
+            value: ''
+        }];
+        customInputName = ''; // Clear the input name field after adding
+    }
+}
+
+function updateCustomInputValue(index: number, newValue: string): void {
+    const updatedInputs = customInputs.map((input, idx) => {
+        if (idx === index) {
+            return {
+                ...input,
+                value: newValue
+            };
+        }
+        return input;
+    });
+    customInputs = updatedInputs;
+}
+
 function togglePrompt(index: number): void {
     const newPrompts = [...selectedPrompts];
     newPrompts[index] = !newPrompts[index];
@@ -46,20 +74,28 @@ function fillSampleData(): void {
     mainConcludingPoint = 'Educational strategies should evolve beyond rigid formulas to embrace more dynamic, student-centered approaches to teaching writing.';
 }
 
-$: combinedPrompt = prompts
-    .map((template, index) => selectedPrompts[index] ? template
-        .replace('{overallTopic}', overallTopic)
-        .replace('{audience}', audience)
-        .replace('{thesisStatement}', thesisStatement)
-        .replace('{bodyTopic1}', bodyTopic1)
-        .replace('{bodyTopic2}', bodyTopic2)
-        .replace('{bodyTopic3}', bodyTopic3)
-        .replace('{mainConcludingPoint}', mainConcludingPoint) : '')
-    .filter(prompt => prompt)
-    .join('\n');
+// Reactive statement to include custom inputs in combinedPrompt
+$: {
+    combinedPrompt = prompts.map(prompt => {
+        let updatedPrompt = prompt;
+        customInputs.forEach(input => {
+            const regex = new RegExp(`{${input.name}}`, 'g');
+            updatedPrompt = updatedPrompt.replace(regex, input.value);
+        });
+        return updatedPrompt;
+    }).join('\n');
+}
+
+function handleInput(event: Event, index: number): void {
+    const target = event.target as HTMLInputElement;  // Safely assert here
+    if (target) {
+      updateCustomInputValue(index, target.value);
+    }
+  }
+
 </script>
 
-  <style>
+      <style>
 textarea {
     width: 100%;
     height: 200px;
@@ -124,11 +160,28 @@ input[type="text"] {
         <input id="mainConcludingPoint" type="text" bind:value={mainConcludingPoint} placeholder="Enter the main concluding point">
     </div>
 
+    {#each customInputs as input, index}
+  <div>
+    <label for="{input.name}">{input.name}:</label>
+    <input 
+      id="{input.name}"
+      type="text" 
+      bind:value={input.value} 
+      on:input={(event) => handleInput(event, index)} 
+      placeholder={`Enter value for ${input.name}`} />
+  </div>
+{/each}
+
     <h2>Custom prompts and inputs</h2>
- 
+
     <div>
         <input type="text" bind:value={customPromptInput} placeholder="Enter your custom prompt here" />
         <button on:click={addCustomPrompt}>Add Custom Prompt</button>
+    </div>
+
+    <div>
+        <input type="text" bind:value={customInputName} placeholder="Enter name for custom input" />
+        <button on:click={addCustomInput}>Add Custom Input</button>
     </div>
 
     <fieldset>
@@ -144,8 +197,8 @@ input[type="text"] {
     </fieldset>
 
     <div>
-        <label for="customPrompt">Your Customized Prompts:</label>
-        <textarea id="customPrompt" placeholder="Your customized prompts will appear here..." readonly>{combinedPrompt}</textarea>
+        <label for="customPrompt">Your Combined Prompts:</label>
+        <textarea id="customPrompt" placeholder="Your combined prompts will appear here..." readonly>{combinedPrompt}</textarea>
     </div>
 
     <p>Copy the above prompts and your essay text, then paste them into the AI interface of your choice.</p>
