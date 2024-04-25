@@ -87,12 +87,11 @@ $: {
 }
 
 function handleInput(event: Event, index: number): void {
-    const target = event.target as HTMLInputElement;  // Safely assert here
+    const target = event.target as HTMLInputElement; // Safely assert here
     if (target) {
-      updateCustomInputValue(index, target.value);
+        updateCustomInputValue(index, target.value);
     }
-  }
-
+}
 </script>
 
       <style>
@@ -124,6 +123,8 @@ input[type="text"] {
 <div>
     <h1>AI Essay Feedback Tool</h1>
     <button on:click={fillSampleData}>Load Sample TEEL Essay Data</button>
+
+    <h2>Inputs</h2>
 
     <div>
         <label for="overallTopic">Overall Topic / Question:</label>
@@ -161,45 +162,45 @@ input[type="text"] {
     </div>
 
     {#each customInputs as input, index}
-  <div>
-    <label for="{input.name}">{input.name}:</label>
-    <input 
-      id="{input.name}"
-      type="text" 
-      bind:value={input.value} 
-      on:input={(event) => handleInput(event, index)} 
-      placeholder={`Enter value for ${input.name}`} />
-  </div>
+    <div>
+        <label for="{input.name}">{input.name}:</label>
+        <input
+            id="{input.name}"
+            type="text"
+            bind:value={input.value}
+            on:input={(event) => handleInput(event, index)}
+        placeholder={`Enter value for ${input.name}`} />
+</div>
 {/each}
 
-    <h2>Custom prompts and inputs</h2>
+<h2>Custom prompts and inputs</h2>
 
-    <div>
-        <input type="text" bind:value={customPromptInput} placeholder="Enter your custom prompt here" />
-        <button on:click={addCustomPrompt}>Add Custom Prompt</button>
-    </div>
+<div>
+    <input type="text" bind:value={customPromptInput} placeholder="Enter your custom prompt here" />
+    <button on:click={addCustomPrompt}>Add Custom Prompt</button>
+</div>
 
-    <div>
-        <input type="text" bind:value={customInputName} placeholder="Enter name for custom input" />
-        <button on:click={addCustomInput}>Add Custom Input</button>
-    </div>
+<div>
+    <input type="text" bind:value={customInputName} placeholder="Enter name for custom input" />
+    <button on:click={addCustomInput}>Add Custom Input</button>
+</div>
 
-    <fieldset>
-        <legend>Select feedback prompts:</legend>
-        {#each prompts as prompt, index}
-        <label>
-            <input
-                type="checkbox"
-                on:change={() => togglePrompt(index)}>
-            {prompt}
-        </label><br>
-        {/each}
-    </fieldset>
+<fieldset>
+    <legend>Select feedback prompts:</legend>
+    {#each prompts as prompt, index}
+    <label>
+        <input
+            type="checkbox"
+            on:change={() => togglePrompt(index)}>
+        {prompt}
+    </label><br>
+    {/each}
+</fieldset>
 
-    <div>
-        <label for="customPrompt">Your Combined Prompts:</label>
-        <textarea id="customPrompt" placeholder="Your combined prompts will appear here..." readonly>{combinedPrompt}</textarea>
-    </div>
+<div>
+    <label for="customPrompt">Your Combined Prompts:</label>
+    <textarea id="customPrompt" placeholder="Your combined prompts will appear here..." readonly>{combinedPrompt}</textarea>
+</div>
 
-    <p>Copy the above prompts and your essay text, then paste them into the AI interface of your choice.</p>
+<p>Copy the above prompts and your essay text, then paste them into the AI interface of your choice.</p>
 </div>
